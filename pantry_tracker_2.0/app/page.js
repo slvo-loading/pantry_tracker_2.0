@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, {useState, useEffect} from 'react';
-import { collection, addDoc, getDocs, querySnapshot, query, onSnapshot, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, getDoc, querySnapshot, query, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import {db} from './firebase'
 
 export default function Home() {
@@ -10,25 +10,25 @@ export default function Home() {
     // {name:'Pineapple', price: 4},
     // {name:'Rice', price: 2}
   ]);
-  const[newItem, setNewItem] = useState({name: '', price: ''})
-  const [total, setTotal] = useState(0);
+  const[newItem, setNewItem] = useState({name: '', quantity: 1, exp_date:''})
 
   // add item to database
   const addItem = async (e) => {
     e.preventDefault()
-    if(newItem.name !== '' && newItem.price !== ''){
+    if(newItem.name !== '' && newItem.exp_date !== ''){
       //setItems([...items,newItem]);
       await addDoc(collection(db, "items"), {
       name: newItem.name.trim(),
-      price: newItem.price,
+      exp_date: newItem.exp_date,
+      quantity: newItem.quantity,
     })
-    setNewItem({name:'', price:''})
+    setNewItem({name:'', quantity: 1, exp_date:''})
     }
   }
 
   //read items from database
   useEffect(() => {
-    const q = query(collection(db, "items"))
+    const q = query(collection(db, "items"), orderBy("exp_date"))
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       let itemsArr = []
 
@@ -40,6 +40,36 @@ export default function Home() {
     }, [])
 
   //delete items from database
+  const deleteItem = async(id) => {
+    const docRef = doc(db, "items", id)
+    const docSnap = await getDoc(docRef)
+
+    const currentData = docSnap.data()
+    const newQuantity = currentData.quantity - 1
+    if(newQuantity == '0'){
+      await deleteDoc(doc(db, "items", id))
+    } else {
+      await updateDoc(docRef, {
+        quantity: newQuantity
+      })
+    }
+  }
+
+  //increasing quantity
+  const additionalItem = async(id) =>{
+    const docRef = doc(db, "items", id) //first make a reference
+    const docSnap = await getDoc(docRef) //get a snapshot of the
+
+    const currentData = docSnap.data()
+    const newQuantity = currentData.quantity + 1
+    await updateDoc(docRef, {
+      quantity: newQuantity
+    })
+  }
+
+ //check for expiring items
+
+
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between sm:p-24 p-4">
@@ -54,8 +84,8 @@ export default function Home() {
               type="text" 
               placeholder='Enter Item' />
             <input 
-              value={newItem.price} 
-              onChange={(e) => setNewItem({...newItem, price:e.target.value})}
+              value={newItem.exp_date} 
+              onChange={(e) => setNewItem({...newItem, exp_date:e.target.value})}
               className="col-span-2 p-3 border mx-3" 
               type="text" 
               placeholder='Enter Exp. Date' />
@@ -69,18 +99,13 @@ export default function Home() {
               <li key={id} className="my-4 w-full flex justify-between bg-slate-950">
                 <div className="p-4 w-full flex justify-between">
                   <span className='capitalize'>{item.name}</span>
-                  <span>{item.price}</span>
+                  <span>{item.quantity}</span>
                 </div>
-                <button className="ml-8 p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-16">X</button>
+                <button onClick={() => additionalItem(item.id)} className="ml-8 p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-16">+</button>
+                <button onClick={() => deleteItem(item.id)} className="p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-16">X</button>
               </li>
             ))}
           </ul>
-          {items.length < 1 ? ('') : (
-            <div className="flex justify-between p-3">
-              <span>Total</span>
-              <span>{total}</span>
-            </div>
-          )}
         </div>
       </div>
     </main>
