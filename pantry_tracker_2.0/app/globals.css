@@ -31,3 +31,9 @@ body {
     text-wrap: balance;
   }
 }
+
+.react-datepicker-wrapper {
+  display: block !important;
+  padding: 0;
+  border: 0;
+}

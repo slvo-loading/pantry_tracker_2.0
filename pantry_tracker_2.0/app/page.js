@@ -78,6 +78,17 @@ export default function Home() {
   }
 
  //check for expiring items
+const daysUntilExpiration = (date) => {
+  const today = new Date()
+  const expDate = new Date(date)
+  const timeDifference = expDate.getTime() - today.getTime()
+  const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24))
+  if (daysDifference == 1){
+    return daysDifference + " Day"
+  } else {
+    return daysDifference + " Days"
+  } 
+}
 
  //user inputs date
  const userDate = (date) => {
@@ -96,24 +107,12 @@ export default function Home() {
               className="col-span-3 p-3 border" 
               type="text" 
               placeholder='Enter Item' />
-            {/* <DatePicker
-              selected={newItem.exp_date}
-              onChange={userDate}
-              dateFormat="MM/dd/yyyy"
-              className="col-span-2 p-3 border"
-              placeholderText="Enter Expiration Date"/> */}
-            {/* <input 
-              value={newItem.exp_date} 
-              onChange={(e) => setNewItem({...newItem, exp_date:e.target.value})}
-              className="col-span-2 p-3 border" 
-              type="text" 
-              placeholder='Enter Exp. Date' /> */}
-            <div className="col-span-2 border h-11 ml-3 mr-3">
+            <div className="col-span-2 border ml-3 mr-3">
               <DatePicker
                 selected={newItem.exp_date}
                 onChange={userDate}
                 dateFormat="MM/dd/yyyy"
-                className="block w-full h-11 p-3"
+                className="block w-full p-3"
                 placeholderText="Enter Expiration Date"/> 
             </div>
             <button 
@@ -121,15 +120,21 @@ export default function Home() {
               className="text-white bg-slate-950 hover:bg-slate-900 p-3 text-xl" 
               type="submit">+</button>
           </form>
-          <ul>
+          <ul className="my-4 w-full grid grid-cols-8 bg-slate-950">
+            <span className="col-span-5 p-4">Item</span>
+            <span className="col-span-1 p-4">Expires in</span>
+            <span className="col-span-1 p-4">Quantity</span>
+          </ul>
+          <ul className="max-h-64 overflow-y-scroll p-4 overflow-x-hidden">
             {items.map((item, id) => (
-              <li key={id} className="my-4 w-full flex justify-between bg-slate-950">
-                <div className="p-4 w-full flex justify-between">
-                  <span className='capitalize'>{item.name}</span>
-                  <span>{item.quantity}</span>
+              <li key={id} className="my-4 w-full grid grid-cols-8 bg-slate-950">
+                <span className='col-span-5 capitalize p-4'>{item.name}</span>
+                <span className="col-span-1 p-4 border-l-2 border-slate-900 flex items-center justify-center whitespace-nowrap">{daysUntilExpiration(item.exp_date.toDate())}</span>
+                <span className="col-span-1 p-4 border-l-2 border-slate-900 flex items-center justify-center">{item.quantity}</span>
+                <div className="col-span-1 flex">
+                  <button onClick={() => additionalItem(item.id)} className="p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-full">+</button>
+                  <button onClick={() => deleteItem(item.id)} className="p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-full">x</button>
                 </div>
-                <button onClick={() => additionalItem(item.id)} className="ml-8 p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-16">+</button>
-                <button onClick={() => deleteItem(item.id)} className="p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-16">x</button>
               </li>
             ))}
           </ul>
