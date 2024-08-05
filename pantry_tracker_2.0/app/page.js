@@ -77,7 +77,7 @@ export default function Home() {
     })
   }
 
- //check for expiring items
+ //check for initial expiring dates
 const daysUntilExpiration = (date) => {
   const today = new Date()
   const expDate = new Date(date)
@@ -89,6 +89,22 @@ const daysUntilExpiration = (date) => {
     return daysDifference + " Days"
   } 
 }
+
+//update the days until expiration everyday
+useEffect(() => {
+  const updateDaysLeft = () => {
+    setItems((prevItems) =>
+      prevItems.map((item) => ({
+        ...item,
+        daysLeft: daysUntilExpiration(item.exp_date),
+      }))
+    )
+  }
+
+  updateDaysLeft()
+  const interval = setInterval(updateDaysLeft, 1000 * 60 * 60 * 24)
+  return () => clearInterval(interval)
+}, [items])
 
  //user inputs date
  const userDate = (date) => {
