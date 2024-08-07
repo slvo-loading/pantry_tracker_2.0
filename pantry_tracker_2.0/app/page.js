@@ -112,48 +112,50 @@ useEffect(() => {
  }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between sm:p-24 p-4">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
-        <h1 className='text-4xl p-4 text-center'>Pantry Tracker</h1>
-        <div className="bg-slate-800 p-4 rounded-lg">
-          <form className="grid grid-cols-6 items-center text-black">
-            <input 
-              value={newItem.name} 
-              onChange={(e) => setNewItem({ ...newItem, name:e.target.value })} 
-              className="col-span-3 p-3 border" 
-              type="text" 
-              placeholder='Enter Item' />
-            <div className="col-span-2 border ml-3 mr-3">
-              <DatePicker
-                selected={newItem.exp_date}
-                onChange={userDate}
-                dateFormat="MM/dd/yyyy"
-                className="block w-full p-3"
-                placeholderText="Enter Expiration Date"/> 
-            </div>
-            <button 
-              onClick={addItem}
-              className="text-white bg-slate-950 hover:bg-slate-900 p-3 text-xl" 
-              type="submit">+</button>
-          </form>
-          <ul className="my-4 w-full grid grid-cols-8 bg-slate-950">
-            <span className="col-span-5 p-4">Item</span>
-            <span className="col-span-1 p-4">Expires in</span>
-            <span className="col-span-1 p-4">Quantity</span>
-          </ul>
-          <ul className="max-h-64 overflow-y-scroll p-4 overflow-x-hidden">
-            {items.map((item, id) => (
-              <li key={id} className="my-4 w-full grid grid-cols-8 bg-slate-950">
-                <span className='col-span-5 capitalize p-4'>{item.name}</span>
-                <span className="col-span-1 p-4 border-l-2 border-slate-900 flex items-center justify-center whitespace-nowrap">{daysUntilExpiration(item.exp_date.toDate())}</span>
-                <span className="col-span-1 p-4 border-l-2 border-slate-900 flex items-center justify-center">{item.quantity}</span>
-                <div className="col-span-1 flex">
-                  <button onClick={() => additionalItem(item.id)} className="p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-full">+</button>
-                  <button onClick={() => deleteItem(item.id)} className="p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-full">x</button>
-                </div>
-              </li>
-            ))}
-          </ul>
+    <main>
+      <div className="flex min-h-screen flex-col items-center justify-between sm:p-20 p-4">
+        <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
+          <h1 className='text-4xl p-4 text-center'>Pantry Tracker</h1>
+          <div className="bg-slate-800 p-4 rounded-lg">
+            <form className="grid grid-cols-6 items-center text-black">
+              <input 
+                value={newItem.name} 
+                onChange={(e) => setNewItem({ ...newItem, name:e.target.value })} 
+                className="col-span-3 p-3 border" 
+                type="text" 
+                placeholder='Enter Item' />
+              <div className="col-span-2 border ml-3 mr-3">
+                <DatePicker
+                  selected={newItem.exp_date}
+                  onChange={userDate}
+                  dateFormat="MM/dd/yyyy"
+                  className="block w-full p-3"
+                  placeholderText="Enter Expiration Date"/> 
+              </div>
+              <button 
+                onClick={addItem}
+                className="text-white bg-slate-950 hover:bg-slate-900 p-3 text-xl" 
+                type="submit">+</button>
+            </form>
+            <ul className="my-4 w-full grid grid-cols-8 bg-slate-950">
+              <span className="col-span-5 p-4">Item</span>
+              <span className="col-span-1 p-4">Expires in</span>
+              <span className="col-span-1 p-4">Quantity</span>
+            </ul>
+            <ul className="max-h-64 overflow-y-scroll p-4 overflow-x-hidden">
+              {items.map((item, id) => (
+                <li key={id} className="my-4 w-full grid grid-cols-8 bg-slate-950">
+                  <span className='col-span-5 capitalize p-4'>{item.name}</span>
+                  <span className="col-span-1 p-4 border-l-2 border-slate-900 flex items-center justify-center whitespace-nowrap">{daysUntilExpiration(item.exp_date.toDate())}</span>
+                  <span className="col-span-1 p-4 border-l-2 border-slate-900 flex items-center justify-center">{item.quantity}</span>
+                  <div className="col-span-1 flex">
+                    <button onClick={() => additionalItem(item.id)} className="p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-full">+</button>
+                    <button onClick={() => deleteItem(item.id)} className="p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-full">x</button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </main>
